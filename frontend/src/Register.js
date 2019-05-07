@@ -6,7 +6,6 @@ class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {parking: {id: 0, description: "", pricePerDay: 0}};
-        this.handleChange1 = this.handleChange1.bind(this);
         this.handleChange2 = this.handleChange2.bind(this);
         this.handleChange3 = this.handleChange3.bind(this);
 
@@ -16,23 +15,23 @@ class Register extends Component {
 
     render() {
         return (
+            <div className="container border mt-3 p-2">
             <form onSubmit={this.handleSubmit}>
-                <input className="input-group-append" type="number" value={this.state.parking.id}
-                       onChange={this.handleChange1}/>
-                <input className="input-group-append" type="text" value={this.state.parking.description}
-                       onChange={this.handleChange2}/>
-                <input className="input-group-append" type="number" value={this.state.parking.pricePerDay}
+                <div className="form-group">
+                    <label htmlFor="description">Description</label>
+                <input className="input-group-append form-control" id="description" type="text" value={this.state.parking.description} onChange={this.handleChange2}/>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="price">Price/Day(in wei)</label>
+                <input id="price" className="input-group-append form-control" type="number" value={this.state.parking.pricePerDay}
                        onChange={this.handleChange3}/>
-                <input className="input-group-append" type="submit" value="Submit"/>
+                </div>
+                <input className="btn-success" type="submit" value="Submit"/>
             </form>
+            </div>
         )
     }
 
-    handleChange1(event) {
-        let parking = this.state.parking;
-        parking.id = event.target.value;
-        this.setState({parking});
-    }
 
     handleChange2(event) {
         let parking = this.state.parking;
@@ -47,14 +46,11 @@ class Register extends Component {
     }
 
     handleSubmit() {
-        alert(this.state.parking.id);
-        if (!parkingContract.isRegistered(this.state.parking.id)) {
-            parkingContract.registerNewParking.sendTransaction(this.state.parking.id, this.state.parking.pricePerDay, this.state.parking.description, transactionObject);
 
-            alert("registration was successful");
-        } else {
-            alert("Failed, probably a parking spot with this id already exist");
-        }
+
+        parkingContract.addSpot.sendTransaction(this.state.parking.description, this.state.parking.pricePerDay, transactionObject);
+        alert("registration was successful");
+
     }
 }
 

@@ -1,60 +1,73 @@
 import React, {Component} from "react";
-import {parkingContract, transactionObject} from "./setup";
+import {parkingContract, transactionObject, transactionObject1} from "./setup";
+import RentForm from "./RentForm";
 class Rent extends Component{
+
 
 
     constructor(props) {
         super(props);
-        this.state = {client: {id: 0, firstname: "", lastname: "",noDays:0}};
-        this.handleChange1 = this.handleChange1.bind(this);
-        this.handleChange2 = this.handleChange2.bind(this);
-        this.handleChange3 = this.handleChange3.bind(this);
-        this.handleChange4 = this.handleChange4.bind(this);
+        console.log(props);
+        this.state = {spots:[],flag:[],id:0};
+        this.onClick = this.onClick.bind(this);
 
-        this.handleSubmit = this.handleSubmit.bind(this)
+    }
+    componentDidMount(){
+        let noSpots = parkingContract.lastIndex();
+        console.log(noSpots);
+        let array=[];
+        let array2=[];
+        for(let i=0;i<noSpots.c[0];i++) {
+            const result = parkingContract.isRented(i);
+            console.log(result);
+            if (!result) {
+            let flag={value:false};
+            array2.push({flag});
+            let spot = {description: "", pricePerDay: 0,id:i};
+            spot.description = parkingContract.getDescription(i);
+            spot.pricePerDay = parkingContract.getPricePerDay(i);
+            array.push({spot});
+        }
 
+        }
+        this.setState({spots:array});
+        this.setState({flag:array2});
+        console.log(array);
     }
 
     render() {
+        let forms = null;
+        let array = [];
+        for(let i=0;i<this.state.flag.length;i++)
+            if(this.state.flag[i].value)
+                array.push(<RentForm id={this.state.spots[i].spot.id}/>);
+            else
+                array.push(null);
+        forms = array;
         return (
-            <form onSubmit={this.handleSubmit}>
-                <input className="input-group-append" type="number" value={this.state.client.id}
-                       onChange={this.handleChange1}/>
-                <input className="input-group-append" type="text" value={this.state.client.firstname}
-                       onChange={this.handleChange2}/>
-                <input className="input-group-append" type="text" value={this.state.client.lastname}
-                       onChange={this.handleChange3}/>
-                <input className="input-group-append" type="number" value={this.state.client.noDays}
-                       onChange={this.handleChange4}/>
-                <input className="input-group-append" type="submit" value="Submit"/>
-            </form>
-        )
+          this.state.spots.map((spot,i) =>
+              <div key={i} className="container border mt-3 p-2" >
+                  <div className="form-group">
+                      <p id="description">Description: {this.state.spots[i].spot.description}</p>
+                  </div>
+                  <div className="form-group">
+
+                      <p id="price">Price/Day: {this.state.spots[i].spot.pricePerDay.c[0]}</p>
+                  </div>
+                  <button className="btn btn-info" onClick={()=>this.onClick(i,this.state.spots[i].spot.id)}>Rent</button>
+                  {forms[i]}
+              </div>
+
+          )
+        );
+    }
+    onClick(i,id){
+        let flags = this.state.flag;
+        console.log(flags);
+        flags[i].value=!flags[i].value;
+        this.setState({flag:flags});
+        this.setState({id:id});
     }
 
-    handleChange1(event) {
-        let client = this.state.client;
-        client.id = event.target.value;
-        this.setState({client});
-    }
-    handleChange2(event){
-        let client = this.state.client;
-        client.firstname = event.target.value;
-        this.setState({client});
-    }
-    handleChange3(event){
-        let client = this.state.client;
-        client.lastname = event.target.value;
-        this.setState({client});
-    }
-    handleChange4(event){
-        let client = this.state.client;
-        client.noDays = event.target.value;
-        this.setState({client});
-    }
-    handleSubmit(event){
-
-        const result =parkingContract.rentASpot.sendTransaction(this.state.client.id,this.state.client.firstname,this.state.client.lastname,this.state.client.noDays,transactionObject);
-        alert(result);
-    }
 }
 export default Rent;

@@ -12,6 +12,9 @@ export const Header = (props) => {
                 <Nav className="mr-auto">
                     <Link className="nav-link" to="/register">Register</Link>
                     <Link className="nav-link" to="/rent">Rent</Link>
+                    <Link className="nav-link" to="/reclaim">Reclaim</Link>
+                    <Link className="nav-link" to="/Info">RentedSpots</Link>
+
                 </Nav>
             </Navbar.Collapse>
         </Navbar>
